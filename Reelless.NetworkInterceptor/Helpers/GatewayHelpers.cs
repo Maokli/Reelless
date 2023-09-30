@@ -1,8 +1,8 @@
 using System.Net;
 using System.Net.NetworkInformation;
-using sandbox.Global;
+using Reelless.NetworkInterceptor.Global;
 
-namespace sandbox.Helpers
+namespace Reelless.NetworkInterceptor.Helpers
 {
     public static class GatewayHelpers
     {
@@ -30,10 +30,29 @@ namespace sandbox.Helpers
             
             return retval;
         }
-        public static PhysicalAddress GetGatewayMAC(Dictionary<IPAddress, PhysicalAddress> clientlist)
+        public static PhysicalAddress GetGatewayMAC(Dictionary<IPAddress, PhysicalAddress> clientlist, int retryCount = 0)
         {
-            IPAddress gatewayip = GetGatewayIP();
-            return clientlist[gatewayip];
+            int maxRetryCount = 5;
+            try
+            {
+                // We try to get the gateway mac
+                IPAddress gatewayip = GetGatewayIP();
+                return clientlist[gatewayip];
+            }
+            catch (System.Exception)
+            {
+                // We are allowed to fail only "maxRetryCount" times
+                if(retryCount > maxRetryCount)
+                {
+                    throw new Exception("Could not locate gateway through scan!");
+                }
+
+                retryCount++;
+                // If we fail we re-get the client list
+                LanClientsList.RefreshClientsList();
+                
+                return GetGatewayMAC(LanClientsList.GetLanClientsList(), retryCount);
+            }
         }
     }
 }

@@ -2,7 +2,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using SharpPcap.LibPcap;
 
-namespace sandbox.Global
+namespace Reelless.NetworkInterceptor.Global
 {
     public static partial class Constants
     {

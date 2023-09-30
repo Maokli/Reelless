@@ -1,5 +1,5 @@
 
-namespace sandbox.Global
+namespace Reelless.NetworkInterceptor.Global
 {
     public static partial class Constants
     {
